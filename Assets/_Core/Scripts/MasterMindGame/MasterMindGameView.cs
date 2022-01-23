@@ -70,7 +70,18 @@ public class MasterMindGameView : MonoBehaviour
 		}
 
 		_slotViews[_currentGuessingIndex].SetGuess(guess);
-		_currentGuessingIndex++;
+
+		do
+		{
+			_slotViews[_currentGuessingIndex].SetCurrentEditing(false);
+
+			_currentGuessingIndex++;
+
+			if (!ReadyToSubmit)
+			{
+				_slotViews[_currentGuessingIndex].SetCurrentEditing(true);
+			}
+		} while (!ReadyToSubmit && _slotViews[_currentGuessingIndex].Slot.State == MasterMindGame.ResultState.Correct);
 
 		_submitButton.interactable = ReadyToSubmit;
 	}
@@ -92,7 +103,24 @@ public class MasterMindGameView : MonoBehaviour
 
 	private void RefreshCurrentGuessingIndex()
 	{
-		_currentGuessingIndex = 0;
+		_currentGuessingIndex = -1;
+		do
+		{
+			if (_currentGuessingIndex >= 0)
+			{
+				_slotViews[_currentGuessingIndex].SetCurrentEditing(false);
+			}
+
+			_currentGuessingIndex++;
+
+			if (!ReadyToSubmit)
+			{
+				_slotViews[_currentGuessingIndex].SetCurrentEditing(true);
+			}
+
+		} while (!ReadyToSubmit && _slotViews[_currentGuessingIndex].Slot.State == MasterMindGame.ResultState.Correct);
+
+
 		_submitButton.interactable = ReadyToSubmit;
 	}
 }

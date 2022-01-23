@@ -15,9 +15,15 @@ public class MasterMindSlotView : MonoBehaviour
 	[SerializeField]
 	private Color _tooLowColor = default;
 
-	private MasterMindGame.Slot _slot = null;
+	[SerializeField]
+	private GameObject _editingVisuals = null;
 
-	public bool IsInitialized => _slot != null;
+	public MasterMindGame.Slot Slot
+	{
+		get; private set;
+	}
+
+	public bool IsInitialized => Slot != null;
 
 	private Color _defaultColor = default;
 	private int _guessingNumber = 0;
@@ -29,9 +35,15 @@ public class MasterMindSlotView : MonoBehaviour
 			return;
 		}
 
-		_slot = slot;
+		Slot = slot;
 		_defaultColor = _label.color;
 		_label.text = "-";
+		SetCurrentEditing(false);
+	}
+
+	public void SetCurrentEditing(bool isEditing)
+	{
+		_editingVisuals.SetActive(isEditing);
 	}
 
 	public void SetGuess(int guessingNumber)
@@ -43,9 +55,9 @@ public class MasterMindSlotView : MonoBehaviour
 
 	public void SubmitGuess()
 	{
-		_slot.SetGuess(_guessingNumber);
-		_label.text = _slot.Guess.ToString();
-		switch(_slot.State)
+		Slot.SetGuess(_guessingNumber);
+		_label.text = Slot.Guess.ToString();
+		switch(Slot.State)
 		{
 			case MasterMindGame.ResultState.None:
 				_label.color = _defaultColor;
