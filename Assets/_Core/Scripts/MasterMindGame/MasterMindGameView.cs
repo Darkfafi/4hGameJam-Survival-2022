@@ -99,6 +99,7 @@ public class MasterMindGameView : MonoBehaviour
 		}
 
 		RefreshCurrentGuessingIndex();
+		_masterMindGame.SubmittedAnswer();
 	}
 
 	private void RefreshCurrentGuessingIndex()

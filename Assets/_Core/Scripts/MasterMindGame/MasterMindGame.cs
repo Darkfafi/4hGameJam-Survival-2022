@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class MasterMindGame
 {
+	public event Action SubmittedAnswerEvent;
+
 	public Slot[] Slots
 	{
 		get; private set;
@@ -12,8 +15,13 @@ public class MasterMindGame
 		Slots = new Slot[slotsAmount];
 		for(int i = 0; i < Slots.Length; i++)
 		{
-			Slots[i] = new Slot(Random.Range(0, 10));
+			Slots[i] = new Slot(UnityEngine.Random.Range(0, 10));
 		}
+	}
+
+	public void SubmittedAnswer()
+	{
+		SubmittedAnswerEvent?.Invoke();
 	}
 
 	public bool IsSolved()
