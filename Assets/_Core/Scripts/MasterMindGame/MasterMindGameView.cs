@@ -16,6 +16,9 @@ public class MasterMindGameView : MonoBehaviour
 	[SerializeField]
 	private SubmitAnswerWarningPopup _submitAnswerWarningPopup = null;
 
+	[SerializeField]
+	private SimplePopup _keysWarningPopup = null;
+
 	private MasterMindGame _masterMindGame = null;
 	private Inventory _inventory = null;
 
@@ -25,7 +28,9 @@ public class MasterMindGameView : MonoBehaviour
 
 	public bool IsInitialized => _masterMindGame != null;
 
-	private bool ReadyToSubmit => _currentGuessingIndex >= _slotViews.Length;
+	private bool ReadyToSubmit => _inventory.Tools.Amount == 0 || _currentGuessingIndex >= _slotViews.Length;
+
+	private bool _pausedInput = false;
 
 	protected void Awake()
 	{
@@ -34,13 +39,14 @@ public class MasterMindGameView : MonoBehaviour
 
 	protected void OnDestroy()
 	{
+		_inventory.Tools.ValueChangedEvent -= OnToolsValueChanged;
 		_masterMindGame.NewGameStartedEvent -= OnNewGameStarted;
 		_submitButton.onClick.RemoveListener(SubmitGuesses);
 	}
 
 	public void Initialize(MasterMindGame game, Inventory inventory)
 	{
-		if(IsInitialized)
+		if (IsInitialized)
 		{
 			return;
 		}
@@ -48,6 +54,7 @@ public class MasterMindGameView : MonoBehaviour
 		_inventory = inventory;
 		_masterMindGame = game;
 		_masterMindGame.NewGameStartedEvent += OnNewGameStarted;
+		_inventory.Tools.ValueChangedEvent += OnToolsValueChanged;
 
 		_submitButton.onClick.AddListener(SubmitGuesses);
 
@@ -56,7 +63,7 @@ public class MasterMindGameView : MonoBehaviour
 
 	private void OnNewGameStarted()
 	{
-		if(_slotViews != null)
+		if (_slotViews != null)
 		{
 			for (int i = 0; i < _slotViews.Length; i++)
 			{
@@ -81,13 +88,23 @@ public class MasterMindGameView : MonoBehaviour
 
 	public void RegisterInput(int number)
 	{
+		if (_pausedInput)
+		{
+			return;
+		}
+
 		SetGuessCurrentSlot(number);
 	}
 
 	public void SetGuessCurrentSlot(int guess)
 	{
-		if(ReadyToSubmit)
+		if (ReadyToSubmit)
 		{
+			if (_inventory.Tools.Amount == 0)
+			{
+				ShowKeysWarning();
+			}
+
 			return;
 		}
 
@@ -99,11 +116,11 @@ public class MasterMindGameView : MonoBehaviour
 
 			_currentGuessingIndex++;
 
-			if (!ReadyToSubmit)
+			if (_currentGuessingIndex < _slotViews.Length)
 			{
 				_slotViews[_currentGuessingIndex].SetCurrentEditing(true);
 			}
-		} while (!ReadyToSubmit && _slotViews[_currentGuessingIndex].Slot.State == MasterMindGame.ResultState.Correct);
+		} while (_currentGuessingIndex < _slotViews.Length && _slotViews[_currentGuessingIndex].Slot.State == MasterMindGame.ResultState.Correct);
 
 		_submitButton.interactable = ReadyToSubmit;
 	}
@@ -115,7 +132,7 @@ public class MasterMindGameView : MonoBehaviour
 			return;
 		}
 
-		Action submitAction = () => 
+		Action submitAction = () =>
 		{
 			for (int i = 0; i < _slotViews.Length; i++)
 			{
@@ -126,11 +143,11 @@ public class MasterMindGameView : MonoBehaviour
 			_masterMindGame.SubmittedAnswer();
 		};
 
-		if(_inventory.Food.Amount == 0)
+		if (_inventory.Food.Amount == 0)
 		{
-			_submitAnswerWarningPopup.OpenPopup((confirmedSubmit) => 
-			{ 
-				if(confirmedSubmit)
+			_submitAnswerWarningPopup.OpenPopup((confirmedSubmit) =>
+			{
+				if (confirmedSubmit)
 				{
 					submitAction.Invoke();
 				}
@@ -154,14 +171,40 @@ public class MasterMindGameView : MonoBehaviour
 
 			_currentGuessingIndex++;
 
-			if (!ReadyToSubmit)
+			if (_currentGuessingIndex < _slotViews.Length)
 			{
 				_slotViews[_currentGuessingIndex].SetCurrentEditing(true);
 			}
 
-		} while (!ReadyToSubmit && _slotViews[_currentGuessingIndex].Slot.State == MasterMindGame.ResultState.Correct);
+		} while (_currentGuessingIndex < _slotViews.Length && _slotViews[_currentGuessingIndex].Slot.State == MasterMindGame.ResultState.Correct);
 
 
 		_submitButton.interactable = ReadyToSubmit;
+	}
+
+	private void OnToolsValueChanged()
+	{
+		_submitButton.interactable = ReadyToSubmit;
+
+		if (_inventory.Tools.Amount == 0)
+		{
+			ShowKeysWarning();
+		}
+		else
+		{
+			CloseKeysWarning();
+		}
+	}
+
+	private void ShowKeysWarning()
+	{
+		_pausedInput = true;
+		_keysWarningPopup.OpenPopup(() => { CloseKeysWarning(); });
+	}
+
+	private void CloseKeysWarning()
+	{
+		_pausedInput = false; ;
+		_keysWarningPopup.ClosePopup();
 	}
 }

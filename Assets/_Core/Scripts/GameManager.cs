@@ -4,7 +4,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 	// Game loop
-	// Chest			<- Forth	(current)
+	// Tools			<- Fifth	(current)
+	// Chest			<- Forth	(done)
 	// Resources		<- Third	(done)
 	// Day / Day Parts	<- Second	(done)
 	// Mini Game		<- First	(done)
@@ -33,6 +34,9 @@ public class GameManager : MonoBehaviour
 
 	[SerializeField]
 	private OpenedChestPopup _openedChestPopup = null;
+
+	[SerializeField]
+	private DayEndedPopup _dayEndedPopup = null;
 
 	[SerializeField]
 	private SimplePopup _losePopup = null;
@@ -94,30 +98,28 @@ public class GameManager : MonoBehaviour
 	{
 		if (Inventory.Food.TrySpend(1))
 		{
-			// Resources Consume
-			Inventory.Tools.Drain(1);
-
-			// Gain Resources (chest)
-			if (_masterMindGame.IsSolved())
+			if (Inventory.Tools.TrySpend(1))
 			{
-				_solvedChests++;
-				int goldAmount = Random.Range(1, 10);
-				_openedChestPopup.OpenPopup(goldAmount, () =>
+				// Gain Resources (chest)
+				if (_masterMindGame.IsSolved())
 				{
-					Inventory.Gold.Add(goldAmount);
-					_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 5f), 10));
-				});
-			}
-
-			// Pass Day
-			CurrentDayPart++;
-			if (CurrentDayPart >= TotalDayParts)
-			{
-				SetNewDay();
+					_solvedChests++;
+					int goldAmount = Random.Range(1, 10);
+					_openedChestPopup.OpenPopup(goldAmount, () =>
+					{
+						Inventory.Gold.Add(goldAmount);
+						_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 5f), 10));
+						PassDayPart();
+					});
+				}
+				else
+				{
+					PassDayPart();
+				}
 			}
 			else
 			{
-				UpdateDayVisuals();
+				PassDayPart();
 			}
 		}
 		else
@@ -129,11 +131,30 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
+	private void PassDayPart()
+	{
+		CurrentDayPart++;
+		UpdateDayVisuals();
+
+		if (CurrentDayPart >= TotalDayParts)
+		{
+			SetNewDay();
+		}
+	}
+
 	private void SetNewDay()
 	{
-		CurrentDay++;
-		CurrentDayPart = 0;
-		UpdateDayVisuals();
+		int toolsToAdd = 2;
+		int goldToAdd = 1;
+		_dayEndedPopup.OpenPopup(CurrentDay, toolsToAdd, goldToAdd, () => 
+		{
+			Inventory.Tools.Add(toolsToAdd);
+			Inventory.Gold.Add(goldToAdd);
+			
+			CurrentDay++;
+			CurrentDayPart = 0;
+			UpdateDayVisuals();
+		});
 	}
 
 	private void UpdateDayVisuals()
