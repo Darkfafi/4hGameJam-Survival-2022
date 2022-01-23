@@ -829,7 +829,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 863826421}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1714,14 +1714,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2054787562}
     m_Modifications:
-    - target: {fileID: 1113026327061922180, guid: 5cd439f50a363204b847eaa19f5f21de, type: 3}
-      propertyPath: _buyButton
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1113026327061922180, guid: 5cd439f50a363204b847eaa19f5f21de, type: 3}
-      propertyPath: _buyCostLabel
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1153740543407024482, guid: 5cd439f50a363204b847eaa19f5f21de, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1973,11 +1965,11 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 505653175}
+  - {fileID: 2054787562}
   - {fileID: 1725142123}
   - {fileID: 1514080430}
   - {fileID: 416483359}
   - {fileID: 1967190838}
-  - {fileID: 2054787562}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2218,14 +2210,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2054787562}
     m_Modifications:
-    - target: {fileID: 1113026327061922180, guid: 5cd439f50a363204b847eaa19f5f21de, type: 3}
-      propertyPath: _buyButton
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1113026327061922180, guid: 5cd439f50a363204b847eaa19f5f21de, type: 3}
-      propertyPath: _buyCostLabel
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1153740543407024482, guid: 5cd439f50a363204b847eaa19f5f21de, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2918,7 +2902,7 @@ RectTransform:
   - {fileID: 1701961236}
   - {fileID: 890457461}
   m_Father: {fileID: 863826421}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3440,7 +3424,7 @@ RectTransform:
   - {fileID: 1000659198}
   - {fileID: 1106310246}
   m_Father: {fileID: 863826421}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -3681,7 +3665,7 @@ RectTransform:
   - {fileID: 1720156091}
   - {fileID: 90371464}
   m_Father: {fileID: 863826421}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3745,7 +3729,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 06dbe548b5b4cbf45991ec3da66b89bc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b26868abefed13742a68ffd16212c393, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3835,7 +3819,7 @@ RectTransform:
   - {fileID: 858916464}
   - {fileID: 905691200}
   m_Father: {fileID: 863826421}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -4141,14 +4125,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2054787562}
     m_Modifications:
-    - target: {fileID: 1113026327061922180, guid: 5cd439f50a363204b847eaa19f5f21de, type: 3}
-      propertyPath: _buyButton
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1113026327061922180, guid: 5cd439f50a363204b847eaa19f5f21de, type: 3}
-      propertyPath: _buyCostLabel
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1153740543407024482, guid: 5cd439f50a363204b847eaa19f5f21de, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
