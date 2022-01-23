@@ -13,7 +13,11 @@ public class MasterMindGameView : MonoBehaviour
 	[SerializeField]
 	private Button _submitButton = null;
 
+	[SerializeField]
+	private SubmitAnswerWarningPopup _submitAnswerWarningPopup = null;
+
 	private MasterMindGame _masterMindGame = null;
+	private Inventory _inventory = null;
 
 	private MasterMindSlotView[] _slotViews = null;
 
@@ -34,13 +38,14 @@ public class MasterMindGameView : MonoBehaviour
 		_submitButton.onClick.RemoveListener(SubmitGuesses);
 	}
 
-	public void Initialize(MasterMindGame game)
+	public void Initialize(MasterMindGame game, Inventory inventory)
 	{
 		if(IsInitialized)
 		{
 			return;
 		}
 
+		_inventory = inventory;
 		_masterMindGame = game;
 		_masterMindGame.NewGameStartedEvent += OnNewGameStarted;
 
@@ -110,13 +115,31 @@ public class MasterMindGameView : MonoBehaviour
 			return;
 		}
 
-		for (int i = 0; i < _slotViews.Length; i++)
+		Action submitAction = () => 
 		{
-			_slotViews[i].SubmitGuess();
-		}
+			for (int i = 0; i < _slotViews.Length; i++)
+			{
+				_slotViews[i].SubmitGuess();
+			}
 
-		RefreshCurrentGuessingIndex();
-		_masterMindGame.SubmittedAnswer();
+			RefreshCurrentGuessingIndex();
+			_masterMindGame.SubmittedAnswer();
+		};
+
+		if(_inventory.Food.Amount == 0)
+		{
+			_submitAnswerWarningPopup.OpenPopup((confirmedSubmit) => 
+			{ 
+				if(confirmedSubmit)
+				{
+					submitAction.Invoke();
+				}
+			});
+		}
+		else
+		{
+			submitAction();
+		}
 	}
 
 	private void RefreshCurrentGuessingIndex()

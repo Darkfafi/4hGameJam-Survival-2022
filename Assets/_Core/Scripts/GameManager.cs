@@ -32,6 +32,9 @@ public class GameManager : MonoBehaviour
 	private InventoryView _inventoryView = null;
 
 	[SerializeField]
+	private OpenedChestPopup _openedChestPopup = null;
+
+	[SerializeField]
 	private TextMeshProUGUI _dayLabel = null;
 
 	[SerializeField]
@@ -64,7 +67,7 @@ public class GameManager : MonoBehaviour
 
 		// Setup View
 		_inventoryView.Initialize(Inventory);
-		_masterMindView.Initialize(_masterMindGame);
+		_masterMindView.Initialize(_masterMindGame, Inventory);
 
 		// Events
 		_masterMindGame.SubmittedAnswerEvent += OnSubmittedAnswerEvent;
@@ -93,8 +96,13 @@ public class GameManager : MonoBehaviour
 		// Gain Resources (chest)
 		if(_masterMindGame.IsSolved())
 		{
-			_masterMindGame.StartNewGame(Mathf.Min(3 + _solvedChests % 5, 10));
-			Inventory.Gold.Add(1);
+			_solvedChests++;
+			int goldAmount = Random.Range(1, 10);
+			_openedChestPopup.OpenPopup(goldAmount, ()=> 
+			{
+				Inventory.Gold.Add(goldAmount);
+				_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 5f), 10));
+			});
 		}
 
 		// Pass Day
