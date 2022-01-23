@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour
 	private OpenedChestPopup _openedChestPopup = null;
 
 	[SerializeField]
+	private SimplePopup _losePopup = null;
+
+	[SerializeField]
 	private TextMeshProUGUI _dayLabel = null;
 
 	[SerializeField]
@@ -89,31 +92,40 @@ public class GameManager : MonoBehaviour
 
 	private void OnSubmittedAnswerEvent()
 	{
-		// Resources Consume
-		Inventory.Tools.Drain(1);
-		Inventory.Food.Drain(1);
-
-		// Gain Resources (chest)
-		if(_masterMindGame.IsSolved())
+		if (Inventory.Food.TrySpend(1))
 		{
-			_solvedChests++;
-			int goldAmount = Random.Range(1, 10);
-			_openedChestPopup.OpenPopup(goldAmount, ()=> 
+			// Resources Consume
+			Inventory.Tools.Drain(1);
+
+			// Gain Resources (chest)
+			if (_masterMindGame.IsSolved())
 			{
-				Inventory.Gold.Add(goldAmount);
-				_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 5f), 10));
-			});
-		}
+				_solvedChests++;
+				int goldAmount = Random.Range(1, 10);
+				_openedChestPopup.OpenPopup(goldAmount, () =>
+				{
+					Inventory.Gold.Add(goldAmount);
+					_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 5f), 10));
+				});
+			}
 
-		// Pass Day
-		CurrentDayPart++;
-		if(CurrentDayPart >= TotalDayParts)
-		{
-			SetNewDay();
+			// Pass Day
+			CurrentDayPart++;
+			if (CurrentDayPart >= TotalDayParts)
+			{
+				SetNewDay();
+			}
+			else
+			{
+				UpdateDayVisuals();
+			}
 		}
 		else
 		{
-			UpdateDayVisuals();
+			_losePopup.OpenPopup(()=> 
+			{
+				UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+			});
 		}
 	}
 
