@@ -16,7 +16,7 @@ public class DayEndedPopup : MonoBehaviour
 	public void OpenPopup(int day, int keyAmount, int goldAmount, Action onCollectPressed)
 	{
 		gameObject.SetActive(true);
-		_titleLabel.text = $"Day: {day} Ended";
+		_titleLabel.text = $"Day {day} Ended";
 		_amountKeysLabel.text = keyAmount.ToString();
 		_amountGoldLabel.text = goldAmount.ToString();
 		_callback = onCollectPressed;

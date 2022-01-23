@@ -4,7 +4,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 	// Game loop
-	// Tools			<- Fifth	(current)
+	// Tools			<- Fifth	(done)
 	// Chest			<- Forth	(done)
 	// Resources		<- Third	(done)
 	// Day / Day Parts	<- Second	(done)
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
 		KeyCode.Alpha9,
 	};
 
-	public const int TotalDayParts = 3;
+	public const int TotalDayParts = 5;
 
 	[SerializeField]
 	private MasterMindGameView _masterMindView = null;
@@ -40,6 +40,9 @@ public class GameManager : MonoBehaviour
 
 	[SerializeField]
 	private SimplePopup _losePopup = null;
+
+	[SerializeField]
+	private SimplePopup _keysWarningPopup = null;
 
 	[SerializeField]
 	private TextMeshProUGUI _dayLabel = null;
@@ -68,8 +71,12 @@ public class GameManager : MonoBehaviour
 
 	protected void Awake()
 	{
-		// Setup Model
+		// Set Values
+		CurrentDay = 1;
+		CurrentDayPart = 0;
 		Inventory = new Inventory(5, 10, 5, 1, 1);
+
+		// Setup Model
 		_masterMindGame = new MasterMindGame(3);
 
 		// Setup View
@@ -89,6 +96,12 @@ public class GameManager : MonoBehaviour
 		{
 			if (Input.GetKeyDown(NumberKeyCodes[i]))
 			{
+				if (Inventory.Tools.Amount == 0)
+				{
+					ShowKeysWarning();
+					return;
+				}
+
 				_masterMindView.RegisterInput(i);
 			}
 		}
@@ -104,7 +117,7 @@ public class GameManager : MonoBehaviour
 				if (_masterMindGame.IsSolved())
 				{
 					_solvedChests++;
-					int goldAmount = Random.Range(1, 10);
+					int goldAmount = Random.Range(1, 10) + Random.Range(0, _masterMindGame.Slots.Length + 1);
 					_openedChestPopup.OpenPopup(goldAmount, () =>
 					{
 						Inventory.Gold.Add(goldAmount);
@@ -140,6 +153,13 @@ public class GameManager : MonoBehaviour
 		{
 			SetNewDay();
 		}
+		else
+		{
+			if (Inventory.Tools.Amount == 0)
+			{
+				ShowKeysWarning();
+			}
+		}
 	}
 
 	private void SetNewDay()
@@ -154,6 +174,11 @@ public class GameManager : MonoBehaviour
 			CurrentDay++;
 			CurrentDayPart = 0;
 			UpdateDayVisuals();
+
+			if (Inventory.Tools.Amount == 0)
+			{
+				ShowKeysWarning();
+			}
 		});
 	}
 
@@ -163,6 +188,17 @@ public class GameManager : MonoBehaviour
 
 		Vector3 scale = _dayPartsFill.localScale;
 		scale.x = (float)CurrentDayPart / TotalDayParts;
-		_dayPartsFill.localScale = scale; 
+		_dayPartsFill.localScale = scale;
+	}
+
+	private void ShowKeysWarning()
+	{
+		CloseKeysWarning();
+		_keysWarningPopup.OpenPopup(() => { CloseKeysWarning(); });
+	}
+
+	private void CloseKeysWarning()
+	{
+		_keysWarningPopup.ClosePopup();
 	}
 }

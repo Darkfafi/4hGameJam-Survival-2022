@@ -16,9 +16,6 @@ public class MasterMindGameView : MonoBehaviour
 	[SerializeField]
 	private SubmitAnswerWarningPopup _submitAnswerWarningPopup = null;
 
-	[SerializeField]
-	private SimplePopup _keysWarningPopup = null;
-
 	private MasterMindGame _masterMindGame = null;
 	private Inventory _inventory = null;
 
@@ -29,8 +26,6 @@ public class MasterMindGameView : MonoBehaviour
 	public bool IsInitialized => _masterMindGame != null;
 
 	private bool ReadyToSubmit => _inventory.Tools.Amount == 0 || _currentGuessingIndex >= _slotViews.Length;
-
-	private bool _pausedInput = false;
 
 	protected void Awake()
 	{
@@ -88,11 +83,6 @@ public class MasterMindGameView : MonoBehaviour
 
 	public void RegisterInput(int number)
 	{
-		if (_pausedInput)
-		{
-			return;
-		}
-
 		SetGuessCurrentSlot(number);
 	}
 
@@ -100,11 +90,6 @@ public class MasterMindGameView : MonoBehaviour
 	{
 		if (ReadyToSubmit)
 		{
-			if (_inventory.Tools.Amount == 0)
-			{
-				ShowKeysWarning();
-			}
-
 			return;
 		}
 
@@ -185,26 +170,5 @@ public class MasterMindGameView : MonoBehaviour
 	private void OnToolsValueChanged()
 	{
 		_submitButton.interactable = ReadyToSubmit;
-
-		if (_inventory.Tools.Amount == 0)
-		{
-			ShowKeysWarning();
-		}
-		else
-		{
-			CloseKeysWarning();
-		}
-	}
-
-	private void ShowKeysWarning()
-	{
-		_pausedInput = true;
-		_keysWarningPopup.OpenPopup(() => { CloseKeysWarning(); });
-	}
-
-	private void CloseKeysWarning()
-	{
-		_pausedInput = false; ;
-		_keysWarningPopup.ClosePopup();
 	}
 }
