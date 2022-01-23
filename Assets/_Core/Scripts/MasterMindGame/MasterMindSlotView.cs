@@ -1,10 +1,14 @@
 ﻿using TMPro;
 using UnityEngine;
+using DG.Tweening;
 
 public class MasterMindSlotView : MonoBehaviour
 {
 	[SerializeField]
 	private TextMeshProUGUI _label = null;
+
+	[SerializeField]
+	private RectTransform _container = null;
 
 	[SerializeField]
 	private Color _correctColor = default;
@@ -22,6 +26,8 @@ public class MasterMindSlotView : MonoBehaviour
 	{
 		get; private set;
 	}
+
+	public RectTransform Container => _container;
 
 	public bool IsInitialized => Slot != null;
 
@@ -51,6 +57,8 @@ public class MasterMindSlotView : MonoBehaviour
 		_guessingNumber = guessingNumber;
 		_label.text = guessingNumber.ToString();
 		_label.color = _defaultColor;
+		transform.DOKill(true);
+		transform.DOPunchScale(new Vector3(0.1f, 0.1f, 0f), 0.5f, 5);
 	}
 
 	public void SubmitGuess()

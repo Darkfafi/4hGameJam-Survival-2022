@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
@@ -48,11 +49,15 @@ public class GameManager : MonoBehaviour
 	private TextMeshProUGUI _dayLabel = null;
 
 	[SerializeField]
+	private RectTransform _chest = null;
+
+	[SerializeField]
 	private Transform _dayPartsFill = null;
 
 	private MasterMindGame _masterMindGame = null;
 
 	private int _solvedChests = 0;
+	private bool _inputLocked = false;
 
 	public int CurrentDay
 	{ 
@@ -96,6 +101,11 @@ public class GameManager : MonoBehaviour
 		{
 			if (Input.GetKeyDown(NumberKeyCodes[i]))
 			{
+				if(_inputLocked)
+				{
+					return;
+				}
+
 				if (Inventory.Tools.Amount == 0)
 				{
 					ShowKeysWarning();
@@ -113,22 +123,29 @@ public class GameManager : MonoBehaviour
 		{
 			if (Inventory.Tools.TrySpend(1))
 			{
-				// Gain Resources (chest)
-				if (_masterMindGame.IsSolved())
+				_inputLocked = true;
+				_chest.DOKill(true);
+				_chest.DOPunchRotation(new Vector3(0f, 0f, 1f), 0.5f).OnComplete(() => 
 				{
-					_solvedChests++;
-					int goldAmount = Random.Range(1, 10) + Random.Range(0, _masterMindGame.Slots.Length + 1);
-					_openedChestPopup.OpenPopup(goldAmount, () =>
+					_inputLocked = false;
+
+					// Gain Resources (chest)
+					if (_masterMindGame.IsSolved())
 					{
-						Inventory.Gold.Add(goldAmount);
-						_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 5f), 10));
+						_solvedChests++;
+						int goldAmount = Random.Range(1, 10) + Random.Range(0, _masterMindGame.Slots.Length + 1);
+						_openedChestPopup.OpenPopup(goldAmount, () =>
+						{
+							Inventory.Gold.Add(goldAmount);
+							_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 5f), 10));
+							PassDayPart();
+						});
+					}
+					else
+					{
 						PassDayPart();
-					});
-				}
-				else
-				{
-					PassDayPart();
-				}
+					}
+				});
 			}
 			else
 			{
@@ -185,10 +202,8 @@ public class GameManager : MonoBehaviour
 	private void UpdateDayVisuals()
 	{
 		_dayLabel.text = $"Day: {CurrentDay}";
-
-		Vector3 scale = _dayPartsFill.localScale;
-		scale.x = (float)CurrentDayPart / TotalDayParts;
-		_dayPartsFill.localScale = scale;
+		_dayPartsFill.DOKill();
+		_dayPartsFill.DOScaleX((float)CurrentDayPart / TotalDayParts, 0.5f);
 	}
 
 	private void ShowKeysWarning()

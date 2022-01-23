@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class ItemSlotView : MonoBehaviour
 {
@@ -60,6 +61,8 @@ public class ItemSlotView : MonoBehaviour
 	private void OnValueChanged()
 	{
 		_amountLabel.text = ItemSlot.Amount.ToString();
+		transform.DOKill(true);
+		transform.DOPunchScale(new Vector3(0.1f, 0.1f, 0f), 0.5f, 5);
 	}
 
 	private void OnBuyClicked()

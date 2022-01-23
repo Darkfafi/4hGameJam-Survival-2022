@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class MasterMindGameView : MonoBehaviour
 {
@@ -119,13 +120,25 @@ public class MasterMindGameView : MonoBehaviour
 
 		Action submitAction = () =>
 		{
+			float duration = 0.5f;
+			float durationPer = duration / _slotViews.Length;
+
 			for (int i = 0; i < _slotViews.Length; i++)
 			{
-				_slotViews[i].SubmitGuess();
-			}
+				int index = i;
+				MasterMindSlotView slotView = _slotViews[i];
+				slotView.Container.DOKill(true);
+				slotView.Container.DOPunchPosition(Vector3.up * 5, durationPer).SetDelay(i * durationPer).OnComplete(()=> 
+				{
+					slotView.SubmitGuess();
 
-			RefreshCurrentGuessingIndex();
-			_masterMindGame.SubmittedAnswer();
+					if(index == _slotViews.Length - 1)
+					{
+						RefreshCurrentGuessingIndex();
+						_masterMindGame.SubmittedAnswer();
+					}
+				});
+			}
 		};
 
 		if (_inventory.Food.Amount == 0)
