@@ -15,6 +15,10 @@ public class ItemSlotView : MonoBehaviour
 	[SerializeField]
 	private Button _buyButton = null;
 
+	[Header("Audio")]
+	[SerializeField]
+	private AudioClip _buySound = null;
+
 	public ItemSlot ItemSlot
 	{
 		get; private set;
@@ -22,7 +26,7 @@ public class ItemSlotView : MonoBehaviour
 
 	public void SetItemSlot(ItemSlot itemSlot)
 	{
-		if(ItemSlot != null)
+		if (ItemSlot != null)
 		{
 			ItemSlot.ValueChangedEvent -= OnValueChanged;
 		}
@@ -30,7 +34,7 @@ public class ItemSlotView : MonoBehaviour
 		ItemSlot = itemSlot;
 		ItemSlot.ValueChangedEvent += OnValueChanged;
 
-		if(itemSlot.BuyCost.HasValue)
+		if (itemSlot.BuyCost.HasValue)
 		{
 			_buyCostLabel.text = itemSlot.BuyCost.Value.ToString();
 			_buyButton.gameObject.SetActive(true);
@@ -67,6 +71,9 @@ public class ItemSlotView : MonoBehaviour
 
 	private void OnBuyClicked()
 	{
-		ItemSlot.TryRequestBuy();
+		if (ItemSlot.TryRequestBuy())
+		{
+			AudioSource.PlayClipAtPoint(_buySound, Camera.main.transform.position);
+		}
 	}
 }

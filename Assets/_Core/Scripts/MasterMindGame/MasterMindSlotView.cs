@@ -22,6 +22,10 @@ public class MasterMindSlotView : MonoBehaviour
 	[SerializeField]
 	private GameObject _editingVisuals = null;
 
+	[Header("Audio")]
+	[SerializeField]
+	private AudioClip _inputSound = null;
+
 	public MasterMindGame.Slot Slot
 	{
 		get; private set;
@@ -58,6 +62,7 @@ public class MasterMindSlotView : MonoBehaviour
 		_label.text = guessingNumber.ToString();
 		_label.color = _defaultColor;
 		transform.DOKill(true);
+		AudioSource.PlayClipAtPoint(_inputSound, Camera.main.transform.position);
 		transform.DOPunchScale(new Vector3(0.1f, 0.1f, 0f), 0.5f, 5);
 	}
 

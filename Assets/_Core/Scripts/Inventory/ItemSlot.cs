@@ -49,11 +49,14 @@ public class ItemSlot
 		return false;
 	}
 
-	public void TryRequestBuy()
+	public bool TryRequestBuy()
 	{
 		if (BuyCost.HasValue)
 		{
+			int oldAmount = Amount;
 			BuyRequestedEvent?.Invoke(this);
+			return Amount != oldAmount;
 		}
+		return false;
 	}
 }

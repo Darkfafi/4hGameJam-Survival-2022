@@ -763,6 +763,7 @@ MonoBehaviour:
   _amountLabel: {fileID: 2964172938686754399}
   _buyCostLabel: {fileID: 241230371725681600}
   _buyButton: {fileID: 5056308164451085860}
+  _buySound: {fileID: 8300000, guid: 548ddbe275f247d4fbb8ef1f5f2ff7fa, type: 3}
 --- !u!114 &6105680614259955058
 MonoBehaviour:
   m_ObjectHideFlags: 0

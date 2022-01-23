@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections;
 
 public class MasterMindGameView : MonoBehaviour
 {
@@ -16,6 +17,12 @@ public class MasterMindGameView : MonoBehaviour
 
 	[SerializeField]
 	private SubmitAnswerWarningPopup _submitAnswerWarningPopup = null;
+
+	[Header("Audio")]
+	[SerializeField]
+	private AudioSource _source = null;
+	[SerializeField]
+	private AudioClip _inputSound = null;
 
 	private MasterMindGame _masterMindGame = null;
 	private Inventory _inventory = null;
@@ -122,23 +129,30 @@ public class MasterMindGameView : MonoBehaviour
 		{
 			float duration = 0.5f;
 			float durationPer = duration / _slotViews.Length;
+			float pitchIncrease = 0.5f / _slotViews.Length;
 
 			for (int i = 0; i < _slotViews.Length; i++)
 			{
-				int index = i;
+				float pitch = 1f + pitchIncrease * i;
 				MasterMindSlotView slotView = _slotViews[i];
 				slotView.Container.DOKill(true);
-				slotView.Container.DOPunchPosition(Vector3.up * 5, durationPer).SetDelay(i * durationPer).OnComplete(()=> 
+				slotView.Container.DOPunchPosition(Vector3.up * 5, durationPer).SetDelay(i * durationPer)
+				.OnStart(() =>
+				{
+					_source.pitch = pitch;
+					_source.clip = _inputSound;
+					_source.Play();
+				}).OnComplete(() =>
 				{
 					slotView.SubmitGuess();
-
-					if(index == _slotViews.Length - 1)
-					{
-						RefreshCurrentGuessingIndex();
-						_masterMindGame.SubmittedAnswer();
-					}
 				});
 			}
+
+			DoMethodAfterDelay(() =>
+			{
+				RefreshCurrentGuessingIndex();
+				_masterMindGame.SubmittedAnswer();
+			}, duration);
 		};
 
 		if (_inventory.Food.Amount == 0)
@@ -183,5 +197,16 @@ public class MasterMindGameView : MonoBehaviour
 	private void OnToolsValueChanged()
 	{
 		_submitButton.interactable = ReadyToSubmit;
+	}
+
+	public void DoMethodAfterDelay(Action method, float delay)
+	{
+		StartCoroutine(DoMethodAfterDelayRoutine(method, delay));
+	}
+
+	private IEnumerator DoMethodAfterDelayRoutine(Action method, float delay)
+	{
+		yield return new WaitForSeconds(delay);
+		method();
 	}
 }

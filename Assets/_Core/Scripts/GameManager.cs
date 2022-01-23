@@ -54,6 +54,12 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	private Transform _dayPartsFill = null;
 
+	[Header("Audio")]
+	[SerializeField]
+	private AudioClip _chestSound = null;
+	[SerializeField]
+	private AudioClip _collectSound = null;
+
 	private MasterMindGame _masterMindGame = null;
 
 	private int _solvedChests = 0;
@@ -125,6 +131,7 @@ public class GameManager : MonoBehaviour
 			{
 				_inputLocked = true;
 				_chest.DOKill(true);
+				AudioSource.PlayClipAtPoint(_chestSound, Camera.main.transform.position);
 				_chest.DOPunchRotation(new Vector3(0f, 0f, 1f), 0.5f).OnComplete(() => 
 				{
 					_inputLocked = false;
@@ -136,6 +143,7 @@ public class GameManager : MonoBehaviour
 						int goldAmount = Random.Range(1, 10) + Random.Range(0, _masterMindGame.Slots.Length + 1);
 						_openedChestPopup.OpenPopup(goldAmount, () =>
 						{
+							AudioSource.PlayClipAtPoint(_collectSound, Camera.main.transform.position);
 							Inventory.Gold.Add(goldAmount);
 							_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 5f), 10));
 							PassDayPart();
@@ -183,8 +191,9 @@ public class GameManager : MonoBehaviour
 	{
 		int toolsToAdd = 2;
 		int goldToAdd = 1;
-		_dayEndedPopup.OpenPopup(CurrentDay, toolsToAdd, goldToAdd, () => 
+		_dayEndedPopup.OpenPopup(CurrentDay, toolsToAdd, goldToAdd, () =>
 		{
+			AudioSource.PlayClipAtPoint(_collectSound, Camera.main.transform.position);
 			Inventory.Tools.Add(toolsToAdd);
 			Inventory.Gold.Add(goldToAdd);
 			
