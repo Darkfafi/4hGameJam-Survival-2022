@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
 						{
 							AudioSource.PlayClipAtPoint(_collectSound, Camera.main.transform.position);
 							Inventory.Gold.Add(goldAmount);
-							_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 5f), 10));
+							_masterMindGame.StartNewGame(Mathf.Min(3 + Mathf.FloorToInt(_solvedChests / 3f), 7));
 							PassDayPart();
 						});
 					}
