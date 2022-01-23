@@ -1,8 +1,8 @@
 ﻿using System;
-using UnityEngine;
 
 public class MasterMindGame
 {
+	public event Action NewGameStartedEvent;
 	public event Action SubmittedAnswerEvent;
 
 	public Slot[] Slots
@@ -12,11 +12,17 @@ public class MasterMindGame
 
 	public MasterMindGame(int slotsAmount)
 	{
+		StartNewGame(slotsAmount);
+	}
+
+	public void StartNewGame(int slotsAmount)
+	{
 		Slots = new Slot[slotsAmount];
-		for(int i = 0; i < Slots.Length; i++)
+		for (int i = 0; i < Slots.Length; i++)
 		{
 			Slots[i] = new Slot(UnityEngine.Random.Range(0, 10));
 		}
+		NewGameStartedEvent?.Invoke();
 	}
 
 	public void SubmittedAnswer()

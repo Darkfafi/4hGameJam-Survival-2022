@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class MasterMindGameView : MonoBehaviour
@@ -29,6 +30,7 @@ public class MasterMindGameView : MonoBehaviour
 
 	protected void OnDestroy()
 	{
+		_masterMindGame.NewGameStartedEvent -= OnNewGameStarted;
 		_submitButton.onClick.RemoveListener(SubmitGuesses);
 	}
 
@@ -40,6 +42,23 @@ public class MasterMindGameView : MonoBehaviour
 		}
 
 		_masterMindGame = game;
+		_masterMindGame.NewGameStartedEvent += OnNewGameStarted;
+
+		_submitButton.onClick.AddListener(SubmitGuesses);
+
+		OnNewGameStarted();
+	}
+
+	private void OnNewGameStarted()
+	{
+		if(_slotViews != null)
+		{
+			for (int i = 0; i < _slotViews.Length; i++)
+			{
+				Destroy(_slotViews[i].gameObject);
+			}
+			_slotViews = null;
+		}
 
 		_slotViews = new MasterMindSlotView[_masterMindGame.Slots.Length];
 
@@ -51,8 +70,6 @@ public class MasterMindGameView : MonoBehaviour
 			_slotViews[i] = slotView;
 			slotView.gameObject.SetActive(true);
 		}
-
-		_submitButton.onClick.AddListener(SubmitGuesses);
 
 		RefreshCurrentGuessingIndex();
 	}

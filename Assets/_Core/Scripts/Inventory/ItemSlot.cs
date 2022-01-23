@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ItemSlot
 {
+	public event Action<ItemSlot> BuyRequestedEvent;
 	public event Action ValueChangedEvent;
 
 	public int Amount
@@ -10,9 +11,15 @@ public class ItemSlot
 		get; private set;
 	}
 
-	public ItemSlot(int amount)
+	public int? BuyCost
+	{
+		get; private set;
+	}
+
+	public ItemSlot(int amount, int? buyCost = null)
 	{
 		Amount = amount;
+		BuyCost = buyCost;
 	}
 
 	public void Drain(int delta)
@@ -30,5 +37,23 @@ public class ItemSlot
 	public bool CanAfford(int amount)
 	{
 		return Amount >= amount;
+	}
+
+	public bool TrySpend(int amount)
+	{
+		if(CanAfford(amount))
+		{
+			Drain(amount);
+			return true;
+		}
+		return false;
+	}
+
+	public void TryRequestBuy()
+	{
+		if (BuyCost.HasValue)
+		{
+			BuyRequestedEvent?.Invoke(this);
+		}
 	}
 }

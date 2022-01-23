@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+	// Game loop
 	// Chest			<- Forth	(current)
 	// Resources		<- Third	(done)
 	// Day / Day Parts	<- Second	(done)
@@ -38,6 +39,8 @@ public class GameManager : MonoBehaviour
 
 	private MasterMindGame _masterMindGame = null;
 
+	private int _solvedChests = 0;
+
 	public int CurrentDay
 	{ 
 		get; private set; 
@@ -56,8 +59,8 @@ public class GameManager : MonoBehaviour
 	protected void Awake()
 	{
 		// Setup Model
-		Inventory = new Inventory(5, 10, 5);
-		_masterMindGame = new MasterMindGame(5);
+		Inventory = new Inventory(5, 10, 5, 1, 1);
+		_masterMindGame = new MasterMindGame(3);
 
 		// Setup View
 		_inventoryView.Initialize(Inventory);
@@ -90,6 +93,7 @@ public class GameManager : MonoBehaviour
 		// Gain Resources (chest)
 		if(_masterMindGame.IsSolved())
 		{
+			_masterMindGame.StartNewGame(Mathf.Min(3 + _solvedChests % 5, 10));
 			Inventory.Gold.Add(1);
 		}
 
