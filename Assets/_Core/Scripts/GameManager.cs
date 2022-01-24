@@ -1,6 +1,6 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
@@ -63,7 +63,6 @@ public class GameManager : MonoBehaviour
 	private MasterMindGame _masterMindGame = null;
 
 	private int _solvedChests = 0;
-	private bool _inputLocked = false;
 
 	public int CurrentDay
 	{ 
@@ -103,11 +102,21 @@ public class GameManager : MonoBehaviour
 
 	protected void Update()
 	{
+		if(SubmitButton.IsSubmitPressed())
+		{
+			if(InputBlocker.IsBlocked)
+			{
+				return;
+			}
+
+			_masterMindView.SubmitGuesses();
+		}
+
 		for (int i = 0; i < NumberKeyCodes.Length; i++)
 		{
 			if (Input.GetKeyDown(NumberKeyCodes[i]))
 			{
-				if(_inputLocked)
+				if(InputBlocker.IsBlocked)
 				{
 					return;
 				}
@@ -123,18 +132,23 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
+	protected void OnDestroy()
+	{
+		InputBlocker.RemoveBlocker(nameof(_chest));
+	}
+
 	private void OnSubmittedAnswerEvent()
 	{
 		if (Inventory.Food.TrySpend(1))
 		{
 			if (Inventory.Tools.TrySpend(1))
 			{
-				_inputLocked = true;
+				InputBlocker.AddBlocker(nameof(_chest));
 				_chest.DOKill(true);
 				AudioSource.PlayClipAtPoint(_chestSound, Camera.main.transform.position);
-				_chest.DOPunchRotation(new Vector3(0f, 0f, 1f), 0.5f).OnComplete(() => 
+				_chest.DOPunchRotation(new Vector3(0f, 0f, 1f), 0.5f).OnComplete(() =>
 				{
-					_inputLocked = false;
+					InputBlocker.RemoveBlocker(nameof(_chest));
 
 					// Gain Resources (chest)
 					if (_masterMindGame.IsSolved())

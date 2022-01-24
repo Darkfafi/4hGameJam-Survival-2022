@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1247596461763097725}
   - component: {fileID: 3181520809848518696}
+  - component: {fileID: 5541148491397561136}
   m_Layer: 5
   m_Name: ChestOpenedPopup
   m_TagString: Untagged
@@ -51,6 +52,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _amountLabel: {fileID: 3373540368960192189}
+--- !u!114 &5541148491397561136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1247596461763097726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff468c99ec1bad94698b73edcad06ac3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2518689015156885791
 GameObject:
   m_ObjectHideFlags: 0

@@ -45,6 +45,7 @@ public class MasterMindGameView : MonoBehaviour
 		_inventory.Tools.ValueChangedEvent -= OnToolsValueChanged;
 		_masterMindGame.NewGameStartedEvent -= OnNewGameStarted;
 		_submitButton.onClick.RemoveListener(SubmitGuesses);
+		InputBlocker.RemoveBlocker(name);
 	}
 
 	public void Initialize(MasterMindGame game, Inventory inventory)
@@ -120,6 +121,11 @@ public class MasterMindGameView : MonoBehaviour
 
 	public void SubmitGuesses()
 	{
+		if (InputBlocker.IsBlocked)
+		{
+			return;
+		}
+
 		if (!ReadyToSubmit)
 		{
 			return;
@@ -131,6 +137,7 @@ public class MasterMindGameView : MonoBehaviour
 			float durationPer = duration / _slotViews.Length;
 			float pitchIncrease = 0.5f / _slotViews.Length;
 
+			InputBlocker.AddBlocker(name);
 			for (int i = 0; i < _slotViews.Length; i++)
 			{
 				float pitch = 1f + pitchIncrease * i;
@@ -152,6 +159,7 @@ public class MasterMindGameView : MonoBehaviour
 			{
 				RefreshCurrentGuessingIndex();
 				_masterMindGame.SubmittedAnswer();
+				InputBlocker.RemoveBlocker(name);
 			}, duration);
 		};
 
